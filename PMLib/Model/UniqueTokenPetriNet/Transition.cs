@@ -21,30 +21,26 @@ namespace PMLib.Model.UniqueTokenPetriNet
 
         public bool Fire (string caseId)
         {
-            if (!InputPlaces.TrueForAll(a => a.Tokens.CaseId == caseId))
-            {
-                return false;
-            }
-
             foreach (Place ip in InputPlaces)
             {
-                if (!ip.Tokens.MockConsumeToken())
+                if (!ip.MockConsumeToken(caseId))
                 {
                     foreach (Place p in InputPlaces)
                     {
-                        p.Tokens.Reset();
+                        p.Reset();
                     }
                 }
             }
 
             foreach (Place ip in InputPlaces)
             {
-                ip.Tokens.MakeMockReal();
+                ip.MakeMockReal();
             }
             foreach (Place op in OutputPlaces)
             {
-                op.Tokens.IncrementTokens();
+                op.AddToken(caseId);
             }
+            return true;
         }
     }
 }

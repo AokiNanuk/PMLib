@@ -5,14 +5,15 @@ using System.Text;
 
 namespace PMLib.Model
 {
-    class Data
+    class ImportedData
     {
-        Frame<int, string> Contents { get; set; }
+        public Frame<int, string> Contents { get; protected set; }
         public string CaseId { get; protected set; }
         public string Activity { get; protected set; }
+        public string Timestamp { get; protected set; }
 
 
-        public Data(Frame<int, string> data)
+        public ImportedData(Frame<int, string> data)
         {
             Contents = data;
         }
@@ -51,8 +52,14 @@ namespace PMLib.Model
             return true;
         }
 
-        public bool SetTimestamp(string date)
+        public bool SetTimestamp(string timestamp)
         {
+            if (!KeyInColumns(timestamp))
+            {
+                return false;
+            }
+
+            Timestamp = timestamp;
             return true;
         }
 

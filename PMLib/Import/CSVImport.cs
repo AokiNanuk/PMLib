@@ -13,10 +13,10 @@ namespace PMLib.Import
     static class CSV
     {
         
-        public static Data MakeDataFrame(string path)
+        public static ImportedData MakeDataFrame(string path)
         {
             var data = Frame.ReadCsv(path);
-            return new Data(data);
+            return new ImportedData(data);
         }
     }
 }

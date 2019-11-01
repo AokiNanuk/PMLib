@@ -6,10 +6,40 @@ namespace PMLib.Model.NonUniqueTokenPetriNet
 {
     class Place
     {
-        public Tokens Tokens { get; }
+        public int Id { get; protected set; }
+        public uint Tokens { get; protected set; } = 0;
+        public uint MockTokens { get; protected set; } = 0;
 
-        public bool IsEndPlace { get; } = false;
+        public Place(int id)
+        {
+            Id = id;
+        }
 
-        public bool IsStartPLace { get; } = false;
+        public void IncrementTokens()
+        {
+            Tokens++;
+        }
+
+        public bool MockConsumeToken()
+        {
+            if (Tokens == 0)
+            {
+                return false;
+            }
+            Tokens--;
+            MockTokens++;
+            return true;
+        }
+
+        public void MakeMockReal()
+        {
+            MockTokens = 0;
+        }
+
+        public void Reset()
+        {
+            Tokens += MockTokens;
+            MockTokens = 0;
+        }
     }
 }

@@ -4,8 +4,13 @@ using System.Text;
 
 namespace PMLib.Model.UniqueTokenPetriNet
 {
-    class Tokens : NonUniqueTokenPetriNet.Tokens
+    class Token
     {
         public string CaseId { get; }
+
+        public Token(string caseId)
+        {
+            CaseId = caseId;
+        }
     }
 }

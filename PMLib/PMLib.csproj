@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Folder Include="Export\" />
-    <Folder Include="Discovery\" />
     <Folder Include="ConformanceChecking\" />
   </ItemGroup>
 

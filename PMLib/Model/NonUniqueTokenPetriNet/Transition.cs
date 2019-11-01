@@ -11,10 +11,10 @@ namespace PMLib.Model.NonUniqueTokenPetriNet
 
         public string Activity { get; }
 
-        public Transition(List<Place> inputPlaces, List<Place> outputPlaces, string activity)
+        public Transition(string activity)
         {
-            InputPlaces = inputPlaces;
-            OutputPlaces = outputPlaces;
+            InputPlaces = new List<Place>();
+            OutputPlaces = new List<Place>();
             Activity = activity;
         }
 
@@ -22,22 +22,22 @@ namespace PMLib.Model.NonUniqueTokenPetriNet
         {
             foreach (Place ip in InputPlaces)
             {
-                if (!ip.Tokens.MockConsumeToken())
+                if (!ip.MockConsumeToken())
                 {
                     foreach (Place p in InputPlaces)
                     {
-                        p.Tokens.Reset();
+                        p.Reset();
                     }
                     return false;
                 }
             }
             foreach (Place ip in InputPlaces)
             {
-                ip.Tokens.MakeMockReal();
+                ip.MakeMockReal();
             }
             foreach (Place op in OutputPlaces)
             {
-                op.Tokens.IncrementTokens();
+                op.IncrementTokens();
             }
             return true;
         }
