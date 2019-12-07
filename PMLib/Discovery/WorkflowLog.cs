@@ -44,19 +44,6 @@ namespace PMLib.Discovery
                 newWft.AddActivity(row.Value.Get(importedData.CaseId));
                 WorkflowTraces.Add(newWft);
             }
-
-
-            /*
-            var caseIdCol = importedData.Contents.TryGetColumn<string>(importedData.CaseId, Deedle.Lookup.Exact);
-            var activityCol = importedData.Contents.TryGetColumn<string>(importedData.Activity, Deedle.Lookup.Exact);
-
-            if (importedData.Timestamp != null)
-            {
-                var timestampCol = importedData.Contents.TryGetColumn<DateTime>(importedData.Timestamp, Deedle.Lookup.Exact);
-            }
-
-            var df = Deedle.Frame.FromColumns<string, int>(caseIdCol);
-            */
         }
     }
 }

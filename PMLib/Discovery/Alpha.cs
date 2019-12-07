@@ -7,133 +7,72 @@ namespace PMLib.Discovery
 {
     static class Alpha
     {
-        public static PetriNet MakePetriNet (RelationMatrix matrix)
+        private static List<Transition> GetTransitions(List<string> activities)
         {
-
             List<Transition> transitions = new List<Transition>();
-            List<Place> places = new List<Place>();
 
-            foreach (string a in matrix.Activities)
+            foreach (string a in activities)
             {
                 transitions.Add(new Transition(a));
             }
 
-            int idCounter = 0;
-            Place startPlace = new Place(idCounter);
+            return transitions;
+        }
+
+        private static int SetupStartPlace(List<Place> places, HashSet<string> startActivities, List<Transition> transitions, int id = 0)
+        {
+            Place startPlace = new Place(id);
+            id++;
             places.Add(startPlace);
-            idCounter++;
-            foreach (string startTransition in matrix.StartActivities)
+            foreach (string startTransition in startActivities)
             {
                 transitions.Find(a => a.Activity == startTransition).InputPlaces.Add(startPlace);
             }
+            return id;
+        }
 
-            var setsAB = new HashSet<Tuple<HashSet<string>, HashSet<string>>>();
-            //var lastAs = new List<HashSet<string>>();
-            //var lastBs = new List<HashSet<string>>();
-
-            int matSize = matrix.Activities.Count;
-            /*for (int i = 0; i < matSize; i++)
-            {
-                if (matrix.Relations[i,i] == Relation.Independency)
-                {
-                    HashSet<string> setA = new HashSet<string>();
-                    HashSet<string> setB = new HashSet<string>();
-                    for (int j = 0; j < matSize; j++)
-                    {
-                        if (matrix.Relations[i,j] == Relation.Succession && matrix.Relations[j,j] == Relation.Independency)
-                        {
-                            setA.Add(matrix.Activities[i]);
-                            setB.Add(matrix.Activities[j]);
-                            setsAB.Add(new Tuple<HashSet<string>, HashSet<string>>(setA, setB));
-                        }
-                    }
-                }
-            }
-
+        private static int SetupPlaces(HashSet<Tuple<HashSet<string>, HashSet<string>>> setsAB, List<Place> places, List<Transition> transitions, int id)
+        {
             foreach (var setAB in setsAB)
             {
-                setsAB.FindAll(a => a.Item1 == setAB.Item1);
-            }*/
-
-            
-            var independentSets = new HashSet<HashSet<string>>();
-            for (int i = 0; i < matSize; i++)
-            {
-                if (matrix.Relations[i,i] == Relation.Independency)
-                {
-                    var nset = new HashSet<string>();
-                    for (int j = 0; j < matSize; j++)
-                    {
-                        if (matrix.Relations[i,j] == Relation.Independency)
-                        {
-                            nset.Add(matrix.Activities[j]);
-                            independentSets.Add(new HashSet<string>(nset));
-                        }
-                    }
-                }
-            }
-
-            foreach (var setA in independentSets)
-            {
-                foreach (var setB in independentSets)
-                {
-                    bool validSets = true;
-                    foreach (string actA in setA)
-                    {
-                        foreach (string actB in setB)
-                        {
-                            if (!(matrix.Relations[matrix.RelationMatrixBounds[actA], matrix.RelationMatrixBounds[actB]] == Relation.Succession))
-                            {
-                                validSets = false;
-                            }
-                        }
-                    }
-
-                    bool isBiggerSet = false;
-                    foreach (var setAB in setsAB)
-                    {
-                        if (setAB.Item1.IsSubsetOf(setA) && setAB.Item2.IsSubsetOf(setB))
-                        {
-                            isBiggerSet = true;
-                            setsAB.Remove(setAB);
-                        }
-                    }
-
-                    if (setA.Count == 1 && setB.Count == 1)
-                    {
-                        isBiggerSet = true;
-                    }
-
-                    if (validSets && isBiggerSet)
-                    {
-                        setsAB.Add(new Tuple<HashSet<string>, HashSet<string>>(setA, setB));
-                    }
-                }
-            }
-
-            foreach (var setAB in setsAB)
-            {
-                Place placeAB = new Place(idCounter);
+                Place placeAB = new Place(id);
+                id++;
                 places.Add(placeAB);
-                idCounter++;
-                foreach(string actA in setAB.Item1)
+                foreach (string actA in setAB.Item1)
                 {
                     transitions.Find(a => a.Activity == actA).OutputPlaces.Add(placeAB);
                 }
 
-                foreach(string actB in setAB.Item2)
+                foreach (string actB in setAB.Item2)
                 {
                     transitions.Find(a => a.Activity == actB).InputPlaces.Add(placeAB);
                 }
             }
+            return id;
+        }
 
-            Place endPlace = new Place(idCounter);
+        private static void SetupEndPlace(List<Place> places, HashSet<string> endActivities, List<Transition> transitions, int id)
+        {
+            Place endPlace = new Place(id);
             places.Add(endPlace);
-            foreach (string endTransition in matrix.EndActivities)
+            foreach (string endTransition in endActivities)
             {
                 transitions.Find(a => a.Activity == endTransition).OutputPlaces.Add(endPlace);
             }
-            return new PetriNet(transitions, places, startPlace, endPlace);
+        }
+
+        public static PetriNet MakePetriNet (RelationMatrix matrix)
+        {
+            List<Transition> transitions = GetTransitions(matrix.Activities);
+            List<Place> places = new List<Place>();
+            HashSet<HashSet<string>> independentSets = IndependentSetUtils.FindIndependentSets(matrix.Relations, matrix.Activities);
+            HashSet<Tuple<HashSet<string>, HashSet<string>>> setsAB = IndependentSetUtils.FindMaximalIndependentSetsAB(independentSets, matrix.Relations, matrix.ActivityIndices);
+
+            int id = SetupStartPlace(places, matrix.StartActivities, transitions);
+            id = SetupPlaces(setsAB, places, transitions, id);
+            SetupEndPlace(places, matrix.EndActivities, transitions, id);
+
+            return new PetriNet(transitions, places, places[0], places[places.Count - 1]);
         }
     }
 }
