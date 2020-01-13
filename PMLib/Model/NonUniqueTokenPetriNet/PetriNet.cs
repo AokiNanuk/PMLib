@@ -4,17 +4,18 @@ using System.Text;
 
 namespace PMLib.Model.NonUniqueTokenPetriNet
 {
-    class PetriNet
+    class PetriNet : IPetriNet
     {
-        public List<Transition> Transitions { get; }
+        public List<ITransition> Transitions { get; }
 
-        public List<Place> Places { get; }
+        public List<IPlace> Places { get; }
 
-        public Place StartPlace { get; }
+        public IPlace StartPlace { get; }
 
-        public Place EndPlace { get; }
+        public IPlace EndPlace { get; }
 
-        public PetriNet(List<Transition> transitions, List<Place> places, Place startPlace, Place endPlace)
+
+        public PetriNet(List<ITransition> transitions, List<IPlace> places, IPlace startPlace, IPlace endPlace)
         {
             Transitions = transitions;
             Places = places;

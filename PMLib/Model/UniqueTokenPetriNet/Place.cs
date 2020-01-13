@@ -11,6 +11,7 @@ namespace PMLib.Model.UniqueTokenPetriNet
 
         public List<Token> MockTokens { get; }
 
+
         public void AddToken(string caseId)
         {
             Tokens.Add(new Token(caseId));

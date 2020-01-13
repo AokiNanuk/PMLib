@@ -10,12 +10,14 @@ namespace PMLib.Model.UniqueTokenPetriNet
 
         public List<Place> OutputPlaces { get; }
 
+        public string Id { get; }
         public string Activity { get; }
 
-        public Transition(List<Place> inputPlaces, List<Place> outputPlaces, string activity)
+        public Transition(List<Place> inputPlaces, List<Place> outputPlaces, string id, string activity)
         {
             InputPlaces = inputPlaces;
             OutputPlaces = outputPlaces;
+            Id = id;
             Activity = activity;
         }
 

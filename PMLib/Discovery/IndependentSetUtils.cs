@@ -44,7 +44,7 @@ namespace PMLib.Discovery
                             if (relations[activityIndices[activityA], activityIndices[activityB]] != Relation.Succession)
                             {
                                 // šlo by zoptimalizovat nepřeváděním aktivit na stringy a zpět
-                                continue;
+                                continue; // řešit přes bool flag
                             }
                         }
                     }

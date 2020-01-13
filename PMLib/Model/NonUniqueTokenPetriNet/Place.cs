@@ -4,13 +4,13 @@ using System.Text;
 
 namespace PMLib.Model.NonUniqueTokenPetriNet
 {
-    class Place
+    class Place : IPlace
     {
-        public int Id { get; protected set; }
+        public string Id { get; }
         public uint Tokens { get; protected set; } = 0;
         public uint MockTokens { get; protected set; } = 0;
 
-        public Place(int id)
+        public Place(string id)
         {
             Id = id;
         }
