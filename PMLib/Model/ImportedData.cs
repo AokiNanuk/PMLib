@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PMLib.Model
 {
-    class ImportedData
+    public class ImportedData
     {
         public Frame<int, string> Contents { get; protected set; }
         public string CaseId { get; protected set; }

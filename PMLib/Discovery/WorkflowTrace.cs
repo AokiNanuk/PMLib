@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMLib.Discovery
 {
-    class WorkflowTrace
+    public class WorkflowTrace
     {
         public string CaseId { get; }
         public List<string> Activities { get; }

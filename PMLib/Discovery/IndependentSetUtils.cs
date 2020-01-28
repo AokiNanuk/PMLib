@@ -15,16 +15,49 @@ namespace PMLib.Discovery
             {
                 if (relations[i, i] == Relation.Independency)
                 {
-                    var nset = new HashSet<string>();
+                    var nset = new HashSet<string>() { activities[i] };
+                    independentSets.Add(new HashSet<string>(nset));
+
                     for (int j = 0; j < matSize; j++)
                     {
-                        if (relations[i, j] == Relation.Independency)
+                        nset = new HashSet<string>() { activities[i] };
+                        for (int k = j; k < matSize; k++)
                         {
-                            nset.Add(activities[j]);
-                            independentSets.Add(new HashSet<string>(nset));
+                            bool allIndependent = true;
+                            if (relations[i, k] == Relation.Independency && i != k)
+                            {
+                                foreach (string act in nset)
+                                {
+                                    int m = activities.FindIndex(a => a == act); // bude lepší poslat si sem indexer
+                                    if (relations[m, k] != Relation.Independency)
+                                    {
+                                        allIndependent = false;
+                                    }
+                                }
+                                if (allIndependent)
+                                {
+                                    nset.Add(activities[k]);
+                                    independentSets.Add(new HashSet<string>(nset));
+                                }
+                            }
                         }
                     }
                 }
+            }
+
+            // vypis
+            Console.WriteLine("Number of ind sets: " + independentSets.Count);
+            foreach (HashSet<string> iset in independentSets)
+            {
+                int i = 1;
+
+                Console.Write("\tIndSet " + i + ": ");
+                foreach (string act in iset)
+                {
+                    Console.Write(act + " ");
+                }
+                Console.Write("\n");
+                i++;
             }
             return independentSets;
         }
@@ -37,6 +70,7 @@ namespace PMLib.Discovery
             {
                 foreach (var setB in independentSets)
                 {
+                    bool isValidSet = true;
                     foreach (string activityA in setA)
                     {
                         foreach (string activityB in setB)
@@ -44,30 +78,52 @@ namespace PMLib.Discovery
                             if (relations[activityIndices[activityA], activityIndices[activityB]] != Relation.Succession)
                             {
                                 // šlo by zoptimalizovat nepřeváděním aktivit na stringy a zpět
-                                continue; // řešit přes bool flag
+                                isValidSet = false;
                             }
                         }
                     }
 
-                    bool isBiggerSet = false;
-                    foreach (var setAB in setsAB)
+                    if (isValidSet)
                     {
-                        if (setAB.Item1.IsSubsetOf(setA) && setAB.Item2.IsSubsetOf(setB))
+                        bool isBiggerSet = false;
+                        var setsToRemove = new HashSet<Tuple<HashSet<string>, HashSet<string>>>();
+
+                        foreach (var setAB in setsAB)
+                        {
+                            if (setAB.Item1.IsSubsetOf(setA) && setAB.Item2.IsSubsetOf(setB))
+                            {
+                                isBiggerSet = true;
+                                setsToRemove.Add(setAB);
+                            }
+                        }
+                        setsAB.ExceptWith(setsToRemove);
+
+                        if (!isBiggerSet && setA.Count == 1 && setB.Count == 1)
                         {
                             isBiggerSet = true;
-                            setsAB.Remove(setAB);
+                        }
+
+                        if (isBiggerSet)
+                        {
+                            setsAB.Add(new Tuple<HashSet<string>, HashSet<string>>(setA, setB));
                         }
                     }
+                }
+            }
 
-                    if (!isBiggerSet && setA.Count == 1 && setB.Count == 1)
-                    {
-                        isBiggerSet = true;
-                    }
-
-                    if (isBiggerSet)
-                    {
-                        setsAB.Add(new Tuple<HashSet<string>, HashSet<string>>(setA, setB));
-                    }
+            //vypis
+            Console.WriteLine("Number of sets AB: " + setsAB.Count);
+            foreach(var setAB in setsAB)
+            {
+                Console.WriteLine("\tSet A:");
+                foreach(string act in setAB.Item1)
+                {
+                    Console.WriteLine("\t\t- " + act);
+                }
+                Console.WriteLine("\tSet B:");
+                foreach (string act in setAB.Item2)
+                {
+                    Console.WriteLine("\t\t- " + act);
                 }
             }
             return setsAB;

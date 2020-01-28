@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMLib.Model
 {
-    interface ITransition
+    public interface ITransition
     {
         List<IPlace> InputPlaces { get; }
         List<IPlace> OutputPlaces { get; }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMLib.Discovery
 {
-    enum Relation
+    public enum Relation
     {
         Independency,
         Succession,

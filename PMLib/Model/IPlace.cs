@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMLib.Model
 {
-    interface IPlace
+    public interface IPlace
     {
         string Id { get; }
     }

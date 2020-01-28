@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PMLib.Discovery
 {
-    static class Alpha
+    public static class Alpha
     {
         private static List<ITransition> GetTransitions(List<string> activities, int id = 0)
         {

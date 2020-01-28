@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMLib.Discovery
 {
-    class RelationMatrix
+    public class RelationMatrix
     {
         public List<string> Activities { get; }
 

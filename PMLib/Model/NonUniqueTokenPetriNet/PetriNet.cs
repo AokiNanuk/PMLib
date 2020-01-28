@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMLib.Model.NonUniqueTokenPetriNet
 {
-    class PetriNet : IPetriNet
+    public class PetriNet : IPetriNet
     {
         public List<ITransition> Transitions { get; }
 

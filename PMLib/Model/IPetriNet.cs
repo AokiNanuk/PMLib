@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PMLib.Model
 {
-    interface IPetriNet
+    public interface IPetriNet
     {
         List<ITransition> Transitions { get; }
 

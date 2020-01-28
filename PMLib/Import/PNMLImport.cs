@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace PMLib.Import
 {
-    class PNMLImport
+    public class PNMLImport
     {
         private static List<IPlace> GetPlaces(IEnumerable<XElement> xPlaces)
         {
@@ -19,12 +19,12 @@ namespace PMLib.Import
             return places;
         }
 
-        private static List<ITransition> GetTransitions(IEnumerable<XElement> xTransitions, IEnumerable<XElement> xArcs, List<IPlace> places)
+        private static List<ITransition> GetTransitions(IEnumerable<XElement> xTransitions, IEnumerable<XElement> xArcs, List<IPlace> places, XNamespace ns)
         {
             List<ITransition> transitions = new List<ITransition>();
             foreach (XElement t in xTransitions)
             {
-                transitions.Add(new Transition(t.Attribute("id").Value, t.Element("name").Element("text").Value));
+                transitions.Add(new Transition(t.Attribute("id").Value, t.Element(ns + "name").Element(ns + "text").Value));
             }
             
             foreach (XElement a in xArcs)
@@ -83,13 +83,15 @@ namespace PMLib.Import
         public static IPetriNet Deserialize(string inputFilePath)
         {
             XElement pnmlRoot = XElement.Load(inputFilePath);
-            XElement netNode = pnmlRoot.Element("net");
-            IEnumerable<XElement> xPlaces = netNode.Elements("place");
-            IEnumerable<XElement> xTransitions = netNode.Elements("transition");
-            IEnumerable<XElement> xArcs = netNode.Elements("arc");
+            XNamespace ns = pnmlRoot.Attribute("xmlns").Value;
+            XElement netNode = pnmlRoot.Element(ns + "net");
+            XElement pageNode = netNode.Element(ns + "page");
+            IEnumerable<XElement> xPlaces = pageNode.Elements(ns + "place");
+            IEnumerable<XElement> xTransitions = pageNode.Elements(ns + "transition");
+            IEnumerable<XElement> xArcs = pageNode.Elements(ns + "arc");
 
             List<IPlace> places = GetPlaces(xPlaces);
-            List<ITransition> transitions = GetTransitions(xTransitions, xArcs, places);
+            List<ITransition> transitions = GetTransitions(xTransitions, xArcs, places, ns);
             Tuple<IPlace, IPlace> startAndEndPlace = GetStartAndEndPlaces(xArcs, places);
 
             return new PetriNet(transitions, places, startAndEndPlace.Item1, startAndEndPlace.Item2);
