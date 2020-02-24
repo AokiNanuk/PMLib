@@ -23,6 +23,13 @@ namespace PMLib.Export
             return xNet;
         }
 
+        private static XElement GetPageNode(XNamespace ns, int num = 0)
+        {
+            XElement xPage = new XElement(ns + "page");
+            xPage.SetAttributeValue("id", "page-" + num);
+            return xPage;
+        }
+
         /*
         private static string GetPlaceId(IPlace place)
         {
@@ -34,7 +41,7 @@ namespace PMLib.Export
             return "t" + transition.Id + "_" + transition.Activity;
         }*/
 
-        private static void AddPlaces(XElement xNet, IEnumerable<IPlace> places, XNamespace ns)
+        private static void AddPlaces(XElement xPage, IEnumerable<IPlace> places, XNamespace ns)
         {
             foreach (IPlace p in places)
             {
@@ -43,11 +50,11 @@ namespace PMLib.Export
                 XElement xPlaceName = new XElement(ns + "name");
                 xPlaceName.Add(new XElement(ns + "text") { Value = p.Id });
                 xPlace.Add(xPlaceName);
-                xNet.Add(xPlace);
+                xPage.Add(xPlace);
             }
         }
 
-        private static void AddTransitions(XElement xNet, IEnumerable<ITransition> transitions, XNamespace ns)
+        private static void AddTransitions(XElement xPage, IEnumerable<ITransition> transitions, XNamespace ns)
         {
             foreach (ITransition t in transitions)
             {
@@ -56,11 +63,11 @@ namespace PMLib.Export
                 XElement xTransitionName = new XElement(ns + "name");
                 xTransitionName.Add(new XElement(ns + "text") { Value = t.Activity });
                 xTransition.Add(xTransitionName);
-                xNet.Add(xTransition);
+                xPage.Add(xTransition);
             }
         }
 
-        private static void AddArcs(XElement xNet, IEnumerable<ITransition> transitions, XNamespace ns)
+        private static void AddArcs(XElement xPage, IEnumerable<ITransition> transitions, XNamespace ns)
         {
             int id = 0;
             foreach (ITransition t in transitions)
@@ -75,7 +82,7 @@ namespace PMLib.Export
                     XElement xArcInscription = new XElement(ns + "inscription");     // dummy value for adding weights
                     xArcInscription.Add(new XElement(ns + "text") { Value = "1" });  // to arcs in the future
                     xArc.Add(xArcInscription);
-                    xNet.Add(xArc);
+                    xPage.Add(xArc);
                 }
 
                 foreach(IPlace op in t.OutputPlaces)
@@ -88,7 +95,7 @@ namespace PMLib.Export
                     XElement xArcInscription = new XElement(ns + "inscription");     // dummy value for adding weights
                     xArcInscription.Add(new XElement(ns + "text") { Value = "1" });  // to arcs in the future
                     xArc.Add(xArcInscription);
-                    xNet.Add(xArc);
+                    xPage.Add(xArc);
                 }
                 
             }
@@ -100,10 +107,11 @@ namespace PMLib.Export
             XElement xRoot = GetPnmlHeader(ns);
             XElement xNet = GetNetNode(ns);
             xRoot.Add(xNet);
-            // Doplnit page node
-            AddPlaces(xNet, net.Places, ns);
-            AddTransitions(xNet, net.Transitions, ns);
-            AddArcs(xNet, net.Transitions, ns);
+            XElement xPage = GetPageNode(ns);
+            xNet.Add(xPage);
+            AddPlaces(xPage, net.Places, ns);
+            AddTransitions(xPage, net.Transitions, ns);
+            AddArcs(xPage, net.Transitions, ns);
 
             XmlWriterSettings settings = new XmlWriterSettings { Indent = true, IndentChars = ("\t") };
             using (XmlWriter writer = XmlWriter.Create("petrinet" + DateTime.Now.ToString().Replace('.', '-').Replace(':', '-') + ".xml", settings))

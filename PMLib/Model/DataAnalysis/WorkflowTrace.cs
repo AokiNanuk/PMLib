@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PMLib.Discovery
+namespace PMLib.Model.DataAnalysis
 {
     public class WorkflowTrace
     {

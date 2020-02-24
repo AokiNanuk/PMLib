@@ -14,5 +14,6 @@ namespace PMLib.Model
 
         IPlace EndPlace { get; }
 
+        List<ITransition> GetStartTransitions();
     }
 }

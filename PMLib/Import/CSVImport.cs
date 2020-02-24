@@ -13,12 +13,12 @@ namespace PMLib.Import
     public static class CSVImport
     {
         
-        public static ImportedData MakeDataFrame(string path)
+        public static ImportedEventLog MakeDataFrame(string path, string encoding = "utf-8", string separator = ",")
         {
-            // settings
-            // přetížené metody
-            var data = Frame.ReadCsv(path);
-            return new ImportedData(data);
+            // settings - headers, culture (schema?)
+
+            var data = Frame.ReadCsv(path, /*schema: encoding,*/ separators: separator);
+            return new ImportedEventLog(data);
         }
     }
 }

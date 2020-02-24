@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="ConformanceChecking\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Deedle" Version="2.1.0" />
   </ItemGroup>
 

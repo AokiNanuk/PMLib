@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PMLib.Discovery
+namespace PMLib.Model.DataAnalysis
 {
     public class RelationMatrix
     {
@@ -14,9 +14,9 @@ namespace PMLib.Discovery
 
         public HashSet<string> EndActivities { get; }
 
-        public Relation[,] Relations { get; }
+        public Relation[,] Footprint { get; }
 
-        private void FillActivities(HashSet<WorkflowTrace> workflowTraces)
+        private void FillActivities(List<WorkflowTrace> workflowTraces)
         {
             foreach (WorkflowTrace wft in workflowTraces)
             {
@@ -34,7 +34,7 @@ namespace PMLib.Discovery
             }
         }
 
-        private void FindSuccession(HashSet<WorkflowTrace> workflowTraces)
+        private void FindSuccession(List<WorkflowTrace> workflowTraces)
         {
             foreach (WorkflowTrace wft in workflowTraces)
             {
@@ -42,7 +42,7 @@ namespace PMLib.Discovery
                 {
                     int fromIndex = ActivityIndices[wft.Activities[i]];
                     int toIndex = ActivityIndices[wft.Activities[i + 1]];
-                    Relations[fromIndex, toIndex] = Relation.Succession;
+                    Footprint[fromIndex, toIndex] = Relation.Succession;
                 }
             }
         }
@@ -53,14 +53,14 @@ namespace PMLib.Discovery
             {
                 for (int j = 0; j < Activities.Count; j++)
                 {
-                    if (Relations[i, j] == Relation.Succession && Relations[j, i] == Relation.Succession)
+                    if (Footprint[i, j] == Relation.Succession && Footprint[j, i] == Relation.Succession)
                     {
-                        Relations[i, j] = Relation.Parallelism;
-                        Relations[j, i] = Relation.Parallelism;
+                        Footprint[i, j] = Relation.Parallelism;
+                        Footprint[j, i] = Relation.Parallelism;
                     }
-                    if (Relations[i, j] == Relation.Succession && Relations[j, i] == Relation.Independency)
+                    if (Footprint[i, j] == Relation.Succession && Footprint[j, i] == Relation.Independency)
                     {
-                        Relations[j, i] = Relation.Predecession;
+                        Footprint[j, i] = Relation.Predecession;
                     }
                 }
             }
@@ -74,11 +74,10 @@ namespace PMLib.Discovery
             ActivityIndices = new Dictionary<string, int>();
             FillActivities(log.WorkflowTraces);
 
-            Relations = new Relation[Activities.Count, Activities.Count];
+            Footprint = new Relation[Activities.Count, Activities.Count];
 
             FindSuccession(log.WorkflowTraces);
             UpdateRelations();
         }
-
     }
 }

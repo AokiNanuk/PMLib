@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PMLib.Discovery
+namespace PMLib.Model.DataAnalysis
 {
     public class WorkflowLog
     {
-        // Bude hash set dělat to co chci?
-        public HashSet<WorkflowTrace> WorkflowTraces { get; }
+        public List<WorkflowTrace> WorkflowTraces { get; }
 
-        private HashSet<WorkflowTrace> MakeEmptyWfts(Deedle.Series<int, int> ids)
+        // timestampy
+
+        private List<WorkflowTrace> MakeEmptyWfts(Deedle.Series<int, int> ids)
         {
-            HashSet<WorkflowTrace> traces = new HashSet<WorkflowTrace>();
+            List<WorkflowTrace> traces = new List<WorkflowTrace>();
             HashSet<int> uniqueIds = new HashSet<int>(ids.Values);
+            Console.WriteLine("Num of unique ids: " + uniqueIds.Count);
             foreach (var id in uniqueIds)
             {
                 traces.Add(new WorkflowTrace("" + id));
@@ -21,12 +23,12 @@ namespace PMLib.Discovery
             return traces;
         }
 
-        public WorkflowLog(Model.ImportedData importedData)
+        public WorkflowLog(Model.ImportedEventLog importedData)
         {
             // Klonuje načtená data a prořeže dataframe pouze na sloupky které jsou potřeba. Asi není nutné, třeba otestovat.
 
-            WorkflowTraces = new HashSet<WorkflowTrace>();
-            Deedle.Frame<int, string> frame = importedData.Contents.Clone();
+            WorkflowTraces = new List<WorkflowTrace>();
+            /*Deedle.Frame<int, string> frame = importedData.Contents.Clone();
 
             List<string> cols = new List<string>(importedData.Contents.ColumnKeys);
             cols.Remove(importedData.CaseId);
@@ -39,14 +41,15 @@ namespace PMLib.Discovery
             foreach (string ck in cols)
             {
                 frame.DropColumn(ck);
-            }
+            }*/
 
-            var emptyTraces = MakeEmptyWfts(frame.GetColumn<int>(importedData.CaseId));
+            // frame -> importedData.Contents
+            var emptyTraces = MakeEmptyWfts(importedData.Contents.GetColumn<int>(importedData.CaseId));
             
 
-            for (int i = 0; i < frame.RowCount; i++)
+            for (int i = 0; i < importedData.Contents.RowCount; i++)
             {
-                var row = frame.TryGetRow<string>(i);
+                var row = importedData.Contents.TryGetRow<string>(i);
                 foreach (WorkflowTrace wft in emptyTraces)
                 {
                     if (wft.CaseId == row.Value.Get(importedData.CaseId))

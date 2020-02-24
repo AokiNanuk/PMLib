@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PMLib.Model
 {
-    public class ImportedData
+    public class ImportedEventLog
     {
         public Frame<int, string> Contents { get; protected set; }
         public string CaseId { get; protected set; }
@@ -13,7 +13,7 @@ namespace PMLib.Model
         public string Timestamp { get; protected set; }
 
 
-        public ImportedData(Frame<int, string> data)
+        public ImportedEventLog(Frame<int, string> data)
         {
             Contents = data;
         }

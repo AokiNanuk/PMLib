@@ -1,10 +1,11 @@
 ﻿using PMLib.Model;
+using PMLib.Model.DataAnalysis;
 using PMLib.Model.NonUniqueTokenPetriNet;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PMLib.Discovery
+namespace PMLib.Discovery.Alpha
 {
     public static class Alpha
     {
@@ -67,8 +68,8 @@ namespace PMLib.Discovery
         {
             List<ITransition> transitions = GetTransitions(matrix.Activities);
             List<IPlace> places = new List<IPlace>();
-            HashSet<HashSet<string>> independentSets = IndependentSetUtils.FindIndependentSets(matrix.Relations, matrix.Activities);
-            HashSet<Tuple<HashSet<string>, HashSet<string>>> setsAB = IndependentSetUtils.FindMaximalIndependentSetsAB(independentSets, matrix.Relations, matrix.ActivityIndices);
+            HashSet<HashSet<string>> independentSets = IndependentSetUtils.FindIndependentSets(matrix.Footprint, matrix.Activities);
+            HashSet<Tuple<HashSet<string>, HashSet<string>>> setsAB = IndependentSetUtils.FindMaximalIndependentSetsAB(independentSets, matrix.Footprint, matrix.ActivityIndices);
 
             int id = SetupStartPlace(places, matrix.StartActivities, transitions);
             id = SetupPlaces(setsAB, places, transitions, id);

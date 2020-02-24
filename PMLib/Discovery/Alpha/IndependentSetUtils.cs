@@ -1,8 +1,9 @@
-﻿using System;
+﻿using PMLib.Model.DataAnalysis;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PMLib.Discovery
+namespace PMLib.Discovery.Alpha
 {
     static class IndependentSetUtils
     {
