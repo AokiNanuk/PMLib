@@ -25,25 +25,8 @@ namespace PMLib.Model.DataAnalysis
 
         public WorkflowLog(Model.ImportedEventLog importedData)
         {
-            // Klonuje načtená data a prořeže dataframe pouze na sloupky které jsou potřeba. Asi není nutné, třeba otestovat.
-
             WorkflowTraces = new List<WorkflowTrace>();
-            /*Deedle.Frame<int, string> frame = importedData.Contents.Clone();
 
-            List<string> cols = new List<string>(importedData.Contents.ColumnKeys);
-            cols.Remove(importedData.CaseId);
-            cols.Remove(importedData.Activity);
-            if (importedData.Timestamp != null)
-            {
-                cols.Remove(importedData.Timestamp);
-            }
-
-            foreach (string ck in cols)
-            {
-                frame.DropColumn(ck);
-            }*/
-
-            // frame -> importedData.Contents
             var emptyTraces = MakeEmptyWfts(importedData.Contents.GetColumn<int>(importedData.CaseId));
             
 
@@ -57,11 +40,13 @@ namespace PMLib.Model.DataAnalysis
                         wft.AddActivity(row.Value.Get(importedData.Activity));
                     }
                 }
-                //WorkflowTrace newWft = new WorkflowTrace(row.Value.Get(importedData.CaseId));
-                //newWft.AddActivity(row.Value.Get(importedData.CaseId));
-                //WorkflowTraces.Add(newWft);
             }
             WorkflowTraces = emptyTraces;
+        }
+
+        public WorkflowLog(List<WorkflowTrace> workflowTraces)
+        {
+            WorkflowTraces = workflowTraces;
         }
     }
 }
