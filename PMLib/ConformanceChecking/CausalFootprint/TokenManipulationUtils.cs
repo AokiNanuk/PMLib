@@ -72,16 +72,6 @@ namespace PMLib.ConformanceChecking.CausalFootprint
                     outputToken.CurrentLevels.Remove(level);
                     activeGlobalIdMonitor.Remove(mergedGlobalId);
                 }
-                /*
-                foreach (string level in outputToken.CurrentLevels)
-                {
-                    if (StringUtils.GetGlobalId(level) == mergedGlobalId)
-                    {
-                        outputToken.MergedLevels.Add(level);
-                        outputToken.CurrentLevels.Remove(level);
-                        activeGlobalIdMonitor.Remove(mergedGlobalId);
-                    }
-                }*/
             }
         }
 
