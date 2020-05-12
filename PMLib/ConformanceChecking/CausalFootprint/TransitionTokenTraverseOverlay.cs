@@ -6,10 +6,13 @@ using PMLib.ConformanceChecking.CausalFootprint;
 
 namespace PMLib.ConformanceChecking.CausalFootprint
 {
+    /// <summary>
+    /// A class used as a transition overlay for the purpouses of causal footprint comparing diagnostics.
+    /// </summary>
     class TransitionTokenTraverseOverlay
     {
 
-        public string TokenFootprint { get; protected set; }
+        public FootprintAnalysisToken TokenFootprint { get; protected set; }
 
         public bool IsMarked { get; protected set; }
 
@@ -21,41 +24,56 @@ namespace PMLib.ConformanceChecking.CausalFootprint
 
         public string Activity { get; }
 
-        public void SetFootprint(string footprint)
+        /// <summary>
+        /// Sets given FootprintAnalysisToken as footprint and marks the transition.
+        /// </summary>
+        /// <param name="footprint">FootprintAnalysisToken to be set as transition's footprint.</param>
+        public void SetFootprint(FootprintAnalysisToken footprint)
         {
             TokenFootprint = footprint;
             IsMarked = true;
         }
 
-        private void SetUpInputPlaces(List<IPlace> places)
+        /// <summary>
+        /// Copies and sets given collection of places as input places.
+        /// </summary>
+        /// <param name="places">A collection of places to be set as input places.</param>
+        private void SetUpInputPlaces(IEnumerable<IPlace> places, List<PlaceTokenTraverseOverlay> allPlaces)
         {
             foreach (IPlace p in places)
             {
-                InputPlaces.Add(new PlaceTokenTraverseOverlay(p));
+                InputPlaces.Add(allPlaces.Find(a => a.Place.Id == p.Id));
             }
         }
 
-        private void SetUpOutputPlaces(List<IPlace> places)
+        /// <summary>
+        /// Copies and sets given collection of places as output places.
+        /// </summary>
+        /// <param name="places">A collection of places to be set as output places.</param>
+        private void SetUpOutputPlaces(IEnumerable<IPlace> places, List<PlaceTokenTraverseOverlay> allPlaces)
         {
             foreach (IPlace p in places)
             {
-                OutputPlaces.Add(new PlaceTokenTraverseOverlay(p));
+                OutputPlaces.Add(allPlaces.Find(a => a.Place.Id == p.Id));
             }
         }
 
-        public TransitionTokenTraverseOverlay(ITransition transition)
+        public TransitionTokenTraverseOverlay(ITransition transition, List<PlaceTokenTraverseOverlay> places)
         {
             InputPlaces = new List<PlaceTokenTraverseOverlay>();
             OutputPlaces = new List<PlaceTokenTraverseOverlay>();
 
-            SetUpInputPlaces(transition.InputPlaces);
-            SetUpOutputPlaces(transition.OutputPlaces);
+            SetUpInputPlaces(transition.InputPlaces, places);
+            SetUpOutputPlaces(transition.OutputPlaces, places);
             Id = transition.Id;
             Activity = transition.Activity;
-            TokenFootprint = "";
             IsMarked = false;
         }
         
+        /// <summary>
+        /// Determines whether the transition can be fired (every input place is marked and there is an output place which is unmarked).
+        /// </summary>
+        /// <returns>True if transition can fire, else returns false.</returns>
         public bool CanFire()
         {
             foreach(PlaceTokenTraverseOverlay p in InputPlaces)
@@ -65,42 +83,18 @@ namespace PMLib.ConformanceChecking.CausalFootprint
                     return false;
                 }
             }
-            return true;
+            if (!IsMarked)
+            {
+                return true;
+            }
+            foreach(PlaceTokenTraverseOverlay p in OutputPlaces)
+            {
+                if (!p.IsMarked)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
-
-
-        /* DEPRECATED
-        public void Fire()
-        {
-            string newFootprint = InputPlaces[0].TokenFootprint;
-
-            if (OutputPlaces.Count > 1)
-            {
-                if (InputPlaces.Count > 1)
-                {
-                    newFootprint = TokenFootprintUtils.CutOneLevel(InputPlaces[0].TokenFootprint);
-                }
-                SetFootprint(newFootprint);
-                FireParallel(newFootprint);
-                return;
-            }
-
-            if (InputPlaces.Count > 1 && OutputPlaces.Count > 0)
-            {
-                newFootprint = TokenFootprintUtils.CutOneLevel(InputPlaces[0].TokenFootprint);
-                foreach (PlaceTokenTraverseOverlay p in OutputPlaces)
-                {
-                    p.SetFootprint(newFootprint);
-                }
-                SetFootprint(newFootprint);
-                return;
-            }
-
-            foreach (PlaceTokenTraverseOverlay p in OutputPlaces)
-            {
-                p.SetFootprint(newFootprint);
-            }
-            SetFootprint(newFootprint);
-        }*/
     }
 }

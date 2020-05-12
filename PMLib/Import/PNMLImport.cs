@@ -1,5 +1,5 @@
 ﻿using PMLib.Model;
-using PMLib.Model.NonUniqueTokenPetriNet;
+using PMLib.Model.BasicPetriNet;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,8 +7,16 @@ using System.Xml.Linq;
 
 namespace PMLib.Import
 {
+    /// <summary>
+    /// This class is a PNML (Petri Net Markup Language) standard compliant PNML-to-single-PetriNet import tool.
+    /// </summary>
     public class PNMLImport
     {
+        /// <summary>
+        /// Takes loaded Petri net data and makes and returns list of places.
+        /// </summary>
+        /// <param name="xPlaces">Loaded places from PNML.</param>
+        /// <returns>List of places.</returns>
         private static List<IPlace> GetPlaces(IEnumerable<XElement> xPlaces)
         {
             List<IPlace> places = new List<IPlace>();
@@ -19,6 +27,14 @@ namespace PMLib.Import
             return places;
         }
 
+        /// <summary>
+        /// Takes loaded Petri net data and makes and returns list of transitions.
+        /// </summary>
+        /// <param name="xTransitions">Loaded transitions from PNML.</param>
+        /// <param name="xArcs">Loaded arcs from PNML.</param>
+        /// <param name="places">Places of Petri net.</param>
+        /// <param name="ns">PNML namespace.</param>
+        /// <returns>List of transitions.</returns>
         private static List<ITransition> GetTransitions(IEnumerable<XElement> xTransitions, IEnumerable<XElement> xArcs, List<IPlace> places, XNamespace ns)
         {
             List<ITransition> transitions = new List<ITransition>();
@@ -44,6 +60,12 @@ namespace PMLib.Import
             return transitions;
         }
 
+        /// <summary>
+        /// Takes loaded Petri net data and finds and returns a tuple with start and end places respectively.
+        /// </summary>
+        /// <param name="xArcs">Loaded arcs from PNML.</param>
+        /// <param name="places">Places of Petri net.</param>
+        /// <returns>Tuple with start place at first position and end place at second position.</returns>
         private static Tuple<IPlace, IPlace> GetStartAndEndPlaces(IEnumerable<XElement> xArcs, IEnumerable<IPlace> places)
         {
             HashSet<string> targetIds = new HashSet<string>();
@@ -79,7 +101,12 @@ namespace PMLib.Import
             return new Tuple<IPlace, IPlace>(startPlace, endPlace);
         }
 
-
+        /// <summary>
+        /// Takes a path to a PNML file and builds a Petri Net according to its content.
+        /// The net is expected to have exactly one start place and exactly one end place.
+        /// </summary>
+        /// <param name="inputFilePath">Path to PNML.</param>
+        /// <returns>PetriNet built from given PNML.</returns>
         public static IPetriNet Deserialize(string inputFilePath)
         {
             XElement pnmlRoot = XElement.Load(inputFilePath);

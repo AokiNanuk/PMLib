@@ -5,15 +5,22 @@ using System.Text;
 
 namespace PMLib.ConformanceChecking.CausalFootprint
 {
+    /// <summary>
+    /// A class used as a place overlay for the purpouses of causal footprint comparing diagnostics.
+    /// </summary>
     class PlaceTokenTraverseOverlay
     {
         public IPlace Place { get; }
 
-        public string TokenFootprint { get; protected set; }
+        public FootprintAnalysisToken TokenFootprint { get; protected set; }
 
         public bool IsMarked { get; protected set; }
 
-        public void SetFootprint(string footprint)
+        /// <summary>
+        /// Sets given FootprintAnalysisToken as footprint and marks the place.
+        /// </summary>
+        /// <param name="footprint">FootprintAnalysisToken to be set as transition's footprint.</param>
+        public void SetFootprint(FootprintAnalysisToken footprint)
         {
             TokenFootprint = footprint;
             IsMarked = true;
@@ -22,7 +29,6 @@ namespace PMLib.ConformanceChecking.CausalFootprint
         public PlaceTokenTraverseOverlay(IPlace place)
         {
             Place = place;
-            TokenFootprint = "";
             IsMarked = false;
         }
     }

@@ -1,14 +1,23 @@
 ﻿using PMLib.Model;
 using PMLib.Model.DataAnalysis;
-using PMLib.Model.NonUniqueTokenPetriNet;
+using PMLib.Model.BasicPetriNet;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace PMLib.Discovery.Alpha
 {
+    /// <summary>
+    /// This class is a handler to a Petri Net from relation matrix discovery algorithm.
+    /// </summary>
     public static class Alpha
     {
+        /// <summary>
+        /// Extracts list of transitions from list of activities from given RelationMatrix class.
+        /// </summary>
+        /// <param name="activities">List of activities from given relation matrix.</param>
+        /// <param name="id">Initial transition id, default is 0.</param>
+        /// <returns>List of transitions.</returns>
         private static List<ITransition> GetTransitions(List<string> activities, int id = 0)
         {
             List<ITransition> transitions = new List<ITransition>();
@@ -22,6 +31,14 @@ namespace PMLib.Discovery.Alpha
             return transitions;
         }
 
+        /// <summary>
+        /// Creates and sets up (initializes with id, adds to relevant transitions and containers) a start place in created Petri Net.
+        /// </summary>
+        /// <param name="places">List (empty) of places in created Petri Net.</param>
+        /// <param name="startActivities">Set of start activities from given relation matrix.</param>
+        /// <param name="transitions">List of transitions in created Petri Net.</param>
+        /// <param name="id">Initial place id, default is 0.</param>
+        /// <returns>Id which should be used for next place.</returns>
         private static int SetupStartPlace(List<IPlace> places, HashSet<string> startActivities, List<ITransition> transitions, int id = 0)
         {
             Place startPlace = new Place("p" + id);
@@ -34,6 +51,14 @@ namespace PMLib.Discovery.Alpha
             return id;
         }
 
+        /// <summary>
+        /// Creates and sets up (initializes with id, adds to relevant transitions and containers) a "generic" (not start or end) place in created Petri Net.
+        /// </summary>
+        /// <param name="setsAB">Pairs of maximal independent sets (A, B) discovered through IndependentSetUtils class methods.</param>
+        /// <param name="places">List of places in created Petri Net.</param>
+        /// <param name="transitions">List of transitions in created Petri Net.</param>
+        /// <param name="id">Id which should be given to the created place.</param>
+        /// <returns>Id which should be used for next place.</returns>
         private static int SetupPlaces(HashSet<Tuple<HashSet<string>, HashSet<string>>> setsAB, List<IPlace> places, List<ITransition> transitions, int id)
         {
             foreach (var setAB in setsAB)
@@ -54,6 +79,14 @@ namespace PMLib.Discovery.Alpha
             return id;
         }
 
+        /// <summary>
+        /// Creates and sets up (initializes with id, adds to relevant transitions and containers) an end place in created Petri Net.
+        /// </summary>
+        /// <param name="places">List of places in created Petri Net.</param>
+        /// <param name="endActivities">Set of start activities from given relation matrix.</param>
+        /// <param name="transitions">List of transitions in created Petri Net.</param>
+        /// <param name="id">Id which should be given to the created place.</param>
+        /// <returns>Id which should be used for next place.</returns>
         private static void SetupEndPlace(List<IPlace> places, HashSet<string> endActivities, List<ITransition> transitions, int id)
         {
             Place endPlace = new Place("p" + id);
@@ -64,6 +97,11 @@ namespace PMLib.Discovery.Alpha
             }
         }
 
+        /// <summary>
+        /// Creates a Petri Net from given relation matrix.
+        /// </summary>
+        /// <param name="matrix">A RelationMatrix used for creating a Petri Net.</param>
+        /// <returns>Created PetriNet object.</returns>
         public static PetriNet MakePetriNet (RelationMatrix matrix)
         {
             List<ITransition> transitions = GetTransitions(matrix.Activities);

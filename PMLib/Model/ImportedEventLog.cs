@@ -5,12 +5,16 @@ using System.Text;
 
 namespace PMLib.Model
 {
+    /// <summary>
+    /// This class contains a data frame with loaded data from CSVImport class as well as several methods
+    /// for setting up meta-data for further use of loaded data.
+    /// </summary>
     public class ImportedEventLog
     {
         public Frame<int, string> Contents { get; protected set; }
-        public string CaseId { get; protected set; }
-        public string Activity { get; protected set; }
-        public string Timestamp { get; protected set; }
+        public string CaseId { get; protected set; } = null;
+        public string Activity { get; protected set; } = null;
+        public string Timestamp { get; protected set; } = null;
 
 
         public ImportedEventLog(Frame<int, string> data)
@@ -18,6 +22,11 @@ namespace PMLib.Model
             Contents = data;
         }
 
+        /// <summary>
+        /// Checks whether such key (column name) which was given by user exists in loaded data.
+        /// </summary>
+        /// <param name="key">String value of given key (column name).</param>
+        /// <returns>True if such key exists in loaded data, else returns false.</returns>
         private bool KeyInColumns(string key)
         {
             foreach (string k in Contents.ColumnKeys)
@@ -30,6 +39,11 @@ namespace PMLib.Model
             return false;
         }
 
+        /// <summary>
+        /// Sets a key (column name) which should be considered as "activity" for the purpouses of discovery algorithms.
+        /// </summary>
+        /// <param name="activity">String value of a key (column name) to be set as "activity".</param>
+        /// <returns>True if a key has been successfuly set as activity, else returns false.</returns>
         public bool SetActivity(string activity)
         {
             if (!KeyInColumns(activity))
@@ -41,6 +55,11 @@ namespace PMLib.Model
             return true;
         }
 
+        /// <summary>
+        /// Sets a key (column name) which should be considered as "Case ID" for the purpouses of discovery algorithms.
+        /// </summary>
+        /// <param name="caseId">String value of a key (column name) to be set as "case ID".</param>
+        /// <returns>True if a key has been successfuly set as activity, else returns false.</returns>
         public bool SetCaseId(string caseId)
         {
             if (!KeyInColumns(caseId))
@@ -52,6 +71,13 @@ namespace PMLib.Model
             return true;
         }
 
+        /// <summary>
+        /// Sets a key (column name) which should be considered as "timestamp" for the purpouses of discovery algorithms.
+        /// Note: The values in this column need to be parsable by DateTime.TryParse(string ...) method in order for 
+        /// ordering activities by timestamps to work properly.
+        /// </summary>
+        /// <param name="timestamp">String value of a key (column name) to be set as "timestamp".</param>
+        /// <returns>True if a key has been successfuly set as activity, else returns false.</returns>
         public bool SetTimestamp(string timestamp)
         {
             if (!KeyInColumns(timestamp))

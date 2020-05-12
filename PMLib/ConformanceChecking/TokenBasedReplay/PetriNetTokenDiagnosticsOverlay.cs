@@ -7,6 +7,9 @@ using System.Text;
 
 namespace PMLib.ConformanceChecking.TokenBasedReplay
 {
+    /// <summary>
+    /// This class is an overlay to a Petri Net, providing further diagnostics options needed for Token Based Replay fitness calculation.
+    /// </summary>
     class PetriNetTokenDiagnosticsOverlay
     {
         IPetriNet PetriNet { get; }
@@ -23,32 +26,39 @@ namespace PMLib.ConformanceChecking.TokenBasedReplay
             }
         }
 
+        /// <summary>
+        /// Finds start place and produces an initial token.
+        /// </summary>
         private void SetupStartPlace()
         {
             PlaceTokenDiagnosticsOverlay startPlace = Diagnostics[PetriNet.StartPlace.Id];
             startPlace.ProduceToken();
         }
 
+        /// <summary>
+        /// Fires given transition (attempts to consume a token in all input places and produces a token in all output places).
+        /// </summary>
+        /// <param name="transition">A transition to be fired.</param>
         private void Fire(ITransition transition)
         {
-            foreach (IPlace ip in transition.InputPlaces)
+            if (transition != null)
             {
-                PlaceTokenDiagnosticsOverlay inputPlace = Diagnostics[ip.Id];
-                inputPlace.ConsumeToken();
+                foreach (IPlace ip in transition.InputPlaces)
+                {
+                    PlaceTokenDiagnosticsOverlay inputPlace = Diagnostics[ip.Id];
+                    inputPlace.ConsumeToken();
+                }
+                foreach (IPlace op in transition.OutputPlaces)
+                {
+                    PlaceTokenDiagnosticsOverlay outputPlace = Diagnostics[op.Id];
+                    outputPlace.ProduceToken();
+                }
             }
-            foreach (IPlace op in transition.OutputPlaces)
-            {
-                PlaceTokenDiagnosticsOverlay outputPlace = Diagnostics[op.Id];
-                outputPlace.ProduceToken();
-            }
-            /*
-            foreach (IPlace ip in transition.InputPlaces)
-            {
-                PlaceTokenDiagnosticsOverlay inputPlace = Diagnostics[ip.Id];
-                inputPlace.SetRemaining();
-            }*/
         }
 
+        /// <summary>
+        /// Goes through all places and sets all "active" tokens as Remaining.
+        /// </summary>
         private void SetRemnants()
         {
             foreach (PlaceTokenDiagnosticsOverlay place in Diagnostics.Values)
@@ -57,12 +67,19 @@ namespace PMLib.ConformanceChecking.TokenBasedReplay
             }
         }
 
+        /// <summary>
+        /// Attempts to consume a token in end place (every compliant trace should have a token only in the end place at its end).
+        /// </summary>
         private void CleanUpEndPlace()
         {
             PlaceTokenDiagnosticsOverlay endPlace = Diagnostics[PetriNet.EndPlace.Id];
             endPlace.ConsumeToken();
         }
 
+        /// <summary>
+        /// Replays a given workflow trace through the Petri Net diagnostics overlay while setting diagnostics info for given trace.
+        /// </summary>
+        /// <param name="trace">A WorkflowTrace to be replayed.</param>
         public void ReplayTrace(WorkflowTrace trace)
         {
             SetupStartPlace();

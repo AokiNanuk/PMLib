@@ -5,8 +5,17 @@ using System.Text;
 
 namespace PMLib.Discovery.Alpha
 {
+    /// <summary>
+    /// A supplementary class used by Alpha algorithm to distinguish maximal independent sets of activities.
+    /// </summary>
     static class IndependentSetUtils
     {
+        /// <summary>
+        /// Finds all independent sets of activities (A never comes before B and B never comes before A) in given relation matrix.
+        /// </summary>
+        /// <param name="relations">Examined relation matrix (causal footprint).</param>
+        /// <param name="activities">Activities in given relation matrix.</param>
+        /// <returns>A set of independent sets of activities.</returns>
         public static HashSet<HashSet<string>> FindIndependentSets(Relation[,] relations, List<string> activities)
         {
             int matSize = activities.Count;
@@ -29,7 +38,7 @@ namespace PMLib.Discovery.Alpha
                             {
                                 foreach (string act in nset)
                                 {
-                                    int m = activities.FindIndex(a => a == act); // bude lepší poslat si sem indexer
+                                    int m = activities.FindIndex(a => a == act);
                                     if (relations[m, k] != Relation.Independency)
                                     {
                                         allIndependent = false;
@@ -45,25 +54,19 @@ namespace PMLib.Discovery.Alpha
                     }
                 }
             }
-
-            // vypis
-            Console.WriteLine("Number of ind sets: " + independentSets.Count);
-            foreach (HashSet<string> iset in independentSets)
-            {
-                int i = 1;
-
-                Console.Write("\tIndSet " + i + ": ");
-                foreach (string act in iset)
-                {
-                    Console.Write(act + " ");
-                }
-                Console.Write("\n");
-                i++;
-            }
             return independentSets;
         }
 
-        public static HashSet<Tuple<HashSet<string>, HashSet<string>>> FindMaximalIndependentSetsAB(HashSet<HashSet<string>> independentSets, Relation[,] relations, Dictionary<string, int> activityIndices)
+        /// <summary>
+        /// Finds such pairs of maximal independent sets (A, B), so that any activity from A can directly precede any activity from B.
+        /// </summary>
+        /// <param name="independentSets">A set of independent sets of activities.</param>
+        /// <param name="relations">Examined relation matrix (causal footprint).</param>
+        /// <param name="activityIndices">Indexer containing mapping of activities to </param>
+        /// <returns></returns>
+        public static HashSet<Tuple<HashSet<string>, HashSet<string>>> FindMaximalIndependentSetsAB(HashSet<HashSet<string>> independentSets, 
+            Relation[,] relations, 
+            Dictionary<string, int> activityIndices)
         {
             var setsAB = new HashSet<Tuple<HashSet<string>, HashSet<string>>>();
 
@@ -78,7 +81,6 @@ namespace PMLib.Discovery.Alpha
                         {
                             if (relations[activityIndices[activityA], activityIndices[activityB]] != Relation.Succession)
                             {
-                                // šlo by zoptimalizovat nepřeváděním aktivit na stringy a zpět
                                 isValidSet = false;
                             }
                         }
@@ -109,22 +111,6 @@ namespace PMLib.Discovery.Alpha
                             setsAB.Add(new Tuple<HashSet<string>, HashSet<string>>(setA, setB));
                         }
                     }
-                }
-            }
-
-            //vypis
-            Console.WriteLine("Number of sets AB: " + setsAB.Count);
-            foreach(var setAB in setsAB)
-            {
-                Console.WriteLine("\tSet A:");
-                foreach(string act in setAB.Item1)
-                {
-                    Console.WriteLine("\t\t- " + act);
-                }
-                Console.WriteLine("\tSet B:");
-                foreach (string act in setAB.Item2)
-                {
-                    Console.WriteLine("\t\t- " + act);
                 }
             }
             return setsAB;

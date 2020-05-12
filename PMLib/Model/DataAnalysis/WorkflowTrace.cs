@@ -4,6 +4,9 @@ using System.Text;
 
 namespace PMLib.Model.DataAnalysis
 {
+    /// <summary>
+    /// A class representing a single workflow trace in an event log.
+    /// </summary>
     public class WorkflowTrace
     {
         public string CaseId { get; }
@@ -15,6 +18,10 @@ namespace PMLib.Model.DataAnalysis
             Activities = new List<string>();
         }
 
+        /// <summary>
+        /// Adds an activity to the workflow trace.
+        /// </summary>
+        /// <param name="activity">String representation of activity of be added.</param>
         public void AddActivity(string activity)
         {
             if (activity == null)
@@ -25,7 +32,11 @@ namespace PMLib.Model.DataAnalysis
             Activities.Add(activity);
         }
 
-        public void AddActivities(List<string> activities)
+        /// <summary>
+        /// Adds multiple activities represented by strings in a collection to the workflow trace.
+        /// </summary>
+        /// <param name="activities">A collection of strings representing activities to be added.</param>
+        public void AddActivities(IEnumerable<string> activities)
         {
             Activities.AddRange(activities);
         }

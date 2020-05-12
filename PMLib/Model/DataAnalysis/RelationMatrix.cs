@@ -4,18 +4,41 @@ using System.Text;
 
 namespace PMLib.Model.DataAnalysis
 {
+    /// <summary>
+    /// A class which represents a matrix of relations (causal footprint) of all activities in data loaded from event log
+    /// as well as supplementary data which are used to better envision and use the matrix.
+    /// </summary>
     public class RelationMatrix
     {
+        /// <summary>
+        /// A list of activities observed in event log.
+        /// </summary>
         public List<string> Activities { get; }
 
+        /// <summary>
+        /// A dictionary of activity to index mapping in relation matrix (causal footprint).
+        /// </summary>
         public Dictionary<string, int> ActivityIndices { get; }
 
+        /// <summary>
+        /// A set of activities which appear at the beginning of observed traces.
+        /// </summary>
         public HashSet<string> StartActivities { get; }
 
+        /// <summary>
+        /// A set of activities which appear at the end of observed traces.
+        /// </summary>
         public HashSet<string> EndActivities { get; }
 
+        /// <summary>
+        /// A relation matrix (casual footprint) of relations within two activities.
+        /// </summary>
         public Relation[,] Footprint { get; }
 
+        /// <summary>
+        /// Goes through given list of workflow traces and fills the Activities, StartActivities, EndActivities and ActivityIndices fields.
+        /// </summary>
+        /// <param name="workflowTraces">A list of (non-timestamped) workflow traces.</param>
         private void FillActivities(List<WorkflowTrace> workflowTraces)
         {
             foreach (WorkflowTrace wft in workflowTraces)
@@ -34,6 +57,10 @@ namespace PMLib.Model.DataAnalysis
             }
         }
 
+        /// <summary>
+        /// Goes through given workflow traces and marks direct succession (B comes directly after A) of all loaded activities.
+        /// </summary>
+        /// <param name="workflowTraces">A list of (non-timestamped) workflow traces.</param>
         private void FindSuccession(List<WorkflowTrace> workflowTraces)
         {
             foreach (WorkflowTrace wft in workflowTraces)
@@ -47,6 +74,11 @@ namespace PMLib.Model.DataAnalysis
             }
         }
 
+        /// <summary>
+        /// Is used to update relations after direct successions have been marked.
+        /// <para>Marks two activities as parallel if A can come after B and B can come after A.</para>
+        /// <para>Marks two activities as successive/predecessive if B always comes after A and A never comes after B.</para>
+        /// </summary>
         private void UpdateRelations()
         {
             for (int i = 0; i < Activities.Count; i++)
@@ -66,6 +98,33 @@ namespace PMLib.Model.DataAnalysis
             }
         }
 
+        /// <summary>
+        /// Is used to create an empty RelationMatrix based only on given activities.
+        /// </summary>
+        /// <param name="activities">A list of activities in all traces.</param>
+        /// <param name="startActivities">A set of activities which can appear at the beginning of traces.</param>
+        /// <param name="endActivities">A set of activities which can appear at the end of traces.</param>
+        public RelationMatrix(List<string> activities, HashSet<string> startActivities, HashSet<string> endActivities)
+        {
+            Activities = activities;
+            StartActivities = startActivities;
+            EndActivities = endActivities;
+            ActivityIndices = new Dictionary<string, int>();
+
+            int i = 0;
+            foreach (string activity in activities)
+            {
+                ActivityIndices.Add(activity, i);
+                i++;
+            }
+
+            Footprint = new Relation[activities.Count, activities.Count];
+        }
+
+        /// <summary>
+        /// Is used to create a full relation matrix based on WorkflowLog.
+        /// </summary>
+        /// <param name="log">A workflow log made from loaded data.</param>
         public RelationMatrix(WorkflowLog log)
         {
             StartActivities = new HashSet<string>();

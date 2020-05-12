@@ -7,14 +7,28 @@ using System.Xml.Linq;
 
 namespace PMLib.Export
 {
+    /// <summary>
+    /// This class is a PNML (Petri Net Markup Language) standard compliant single-PetriNet-to-PNML export tool.
+    /// </summary>
     public static class PNMLExport
     {
+        /// <summary>
+        /// Creates an XElement node representing header to a PNML file with an appropriate PNML namespace.
+        /// </summary>
+        /// <param name="ns">A namespace of PNML file.</param>
+        /// <returns>XElement containing a properly set up header node to a PNML file.</returns>
         private static XElement GetPnmlHeader(XNamespace ns)
         {
             XElement xRoot = new XElement(ns + "pnml");
             return xRoot;
         }
 
+        /// <summary>
+        /// Creates an XElement node representing the (Petri) net object with an appropriate PNML namespace.
+        /// </summary>
+        /// <param name="ns">A namespace of PNML file.</param>
+        /// <param name="id">A string attribute net identificator, default is "net".</param>
+        /// <returns>XElement containing a properly set up net node.</returns>
         private static XElement GetNetNode(XNamespace ns, string id = "net")
         {
             XElement xNet = new XElement(ns + "net");
@@ -23,6 +37,12 @@ namespace PMLib.Export
             return xNet;
         }
 
+        /// <summary>
+        /// Creates an XElement node representing a formal Page node with an appropriate PNML namespace.
+        /// </summary>
+        /// <param name="ns">A namespace of PNML file.</param>
+        /// <param name="num">Int attribute of page number, default is 0.</param>
+        /// <returns>XElement containing a properly set up page node.</returns>
         private static XElement GetPageNode(XNamespace ns, int num = 0)
         {
             XElement xPage = new XElement(ns + "page");
@@ -30,17 +50,12 @@ namespace PMLib.Export
             return xPage;
         }
 
-        /*
-        private static string GetPlaceId(IPlace place)
-        {
-            return "p" + place.Id;
-        }
-
-        private static string GetTransitionId(ITransition transition)
-        {
-            return "t" + transition.Id + "_" + transition.Activity;
-        }*/
-
+        /// <summary>
+        /// Adds place nodes to the page node based on places in exported Petri Net.
+        /// </summary>
+        /// <param name="xPage">A page container node.</param>
+        /// <param name="places">A collection of places of exported Petri Net.</param>
+        /// <param name="ns">A namespace of PNML file.</param>
         private static void AddPlaces(XElement xPage, IEnumerable<IPlace> places, XNamespace ns)
         {
             foreach (IPlace p in places)
@@ -54,6 +69,12 @@ namespace PMLib.Export
             }
         }
 
+        /// <summary>
+        /// Adds transition nodes to the page node based on transitions in exported Petri Net.
+        /// </summary>
+        /// <param name="xPage">A page container node.</param>
+        /// <param name="transitions">A collection of transitions of exported Petri Net.</param>
+        /// <param name="ns">A namespace of PNML file.</param>
         private static void AddTransitions(XElement xPage, IEnumerable<ITransition> transitions, XNamespace ns)
         {
             foreach (ITransition t in transitions)
@@ -67,6 +88,12 @@ namespace PMLib.Export
             }
         }
 
+        /// <summary>
+        /// Adds arc nodes (all weighted equally) to the page node based on transitions and their input and output places.
+        /// </summary>
+        /// <param name="xPage">A page container node.</param>
+        /// <param name="transitions">A collection of transitions of exported Petri Net.</param>
+        /// <param name="ns">A namespace of PNML file.</param>
         private static void AddArcs(XElement xPage, IEnumerable<ITransition> transitions, XNamespace ns)
         {
             int id = 0;
@@ -101,7 +128,12 @@ namespace PMLib.Export
             }
         }
 
-        public static void Serialize(IPetriNet net)
+        /// <summary>
+        /// Serializes given Petri Net compliant with IPetriNet interface to a PNML file with .xml extension.
+        /// </summary>
+        /// <param name="net">An IPetriNet compliant Petri Net.</param>
+        /// <returns>Filename of created file.</returns>
+        public static string Serialize(IPetriNet net)
         {
             XNamespace ns = "http://www.pnml.org/version-2009/grammar/pnml";
             XElement xRoot = GetPnmlHeader(ns);
@@ -114,10 +146,12 @@ namespace PMLib.Export
             AddArcs(xPage, net.Transitions, ns);
 
             XmlWriterSettings settings = new XmlWriterSettings { Indent = true, IndentChars = ("\t") };
-            using (XmlWriter writer = XmlWriter.Create("petrinet" + DateTime.Now.ToString().Replace('.', '-').Replace(':', '-') + ".xml", settings))
+            string filename = "petrinet" + DateTime.Now.ToString().Replace('.', '-').Replace(':', '-') + ".xml";
+            using (XmlWriter writer = XmlWriter.Create(filename, settings))
             {
                 xRoot.Save(writer);
             }
+            return filename;
         }
     }
 }
