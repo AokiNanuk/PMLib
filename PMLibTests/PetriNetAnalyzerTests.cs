@@ -6,6 +6,7 @@ using PMLib.Model;
 using PMLib.Model.DataAnalysis;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace PMLibTests
@@ -13,12 +14,16 @@ namespace PMLibTests
     [TestClass]
     public class PetriNetAnalyzerTests
     {
-        const string hardCsv = ".\\alpha.csv";
-        const string easyCsv = ".\\alpha2.csv";
-        const string extremelyEasyCsv = ".\\easyalpha.csv";
-        const string veryHardCsv = ".\\alphaHard.csv";
-        const string cycleNetCsv = ".\\cycleNet.csv";
-        const string cycleNetCorrectPnml = ".\\cycleNetCorrect.xml";
+        static readonly string workingDirectory = Environment.CurrentDirectory;
+        static readonly string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+
+        static readonly string separator = System.IO.Path.DirectorySeparatorChar.ToString();
+        readonly string hardCsv = projectDirectory + separator + "files" + separator + "alpha.csv";
+        readonly string easyCsv = projectDirectory + separator + "files" + separator + "alpha2.csv";
+        readonly string extremelyEasyCsv = projectDirectory + separator + "files" + separator + "easyalpha.csv";
+        readonly string veryHardCsv = projectDirectory + separator + "files" + separator + "alphaHard.csv";
+        readonly string cycleNetCsv = projectDirectory + separator + "files" + separator + "cycleNet.csv";
+        readonly string cycleNetCorrectPnml = projectDirectory + separator + "files" + separator + "cycleNetCorrect.xml";
 
         private RelationMatrix MakeExtremelyEasyRelationMatrix()
         {

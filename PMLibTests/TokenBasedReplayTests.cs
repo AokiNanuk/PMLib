@@ -6,6 +6,7 @@ using PMLib.Model;
 using PMLib.Model.DataAnalysis;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace PMLibTests
@@ -13,9 +14,13 @@ namespace PMLibTests
     [TestClass]
     public class TokenBasedReplayTests
     {
-        const string hardCsv = ".\\alpha.csv";
-        const string tamperedHardCsv = ".\\tamperedAlpha.csv";
-        const string randomLog = ".\\randomLog.csv";
+        static readonly string workingDirectory = Environment.CurrentDirectory;
+        static readonly string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+
+        static readonly string separator = System.IO.Path.DirectorySeparatorChar.ToString();
+        readonly string hardCsv = projectDirectory + separator + "files" + separator + "alpha.csv";
+        readonly string tamperedHardCsv = projectDirectory + separator + "files" + separator + "tamperedAlpha.csv";
+        readonly string randomLog = projectDirectory + separator + "files" + separator + "randomLog.csv";
 
         [TestMethod]
         public void CompareLogWithAccordingPetriNetTest()

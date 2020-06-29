@@ -13,10 +13,13 @@ namespace PMLibTests
     [TestClass]
     public class ImportAndExportTests
     {
-        const string CSVPath = ".\\alpha2.csv";
-        const string CSVPathSemicolon = ".\\alpha1.csv";
-        const string PNMLpath = ".\\easynet.xml";
+        static readonly string workingDirectory = Environment.CurrentDirectory;
+        static readonly string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
 
+        static readonly string separator = System.IO.Path.DirectorySeparatorChar.ToString();
+        readonly string CSVPath = projectDirectory + separator + "files" + separator + "alpha2.csv";
+        readonly string CSVPathSemicolon = projectDirectory + separator + "files" + separator + "alpha1.csv";
+        readonly string PNMLpath = projectDirectory + separator + "files" + separator + "easynet.xml";
         
         private string MakeEasyDOT()
         {

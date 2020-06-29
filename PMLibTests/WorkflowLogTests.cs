@@ -3,14 +3,19 @@ using PMLib.Import;
 using PMLib.Model;
 using PMLib.Model.DataAnalysis;
 using System;
+using System.IO;
 
 namespace PMLibTests
 {
     [TestClass]
     public class WorkflowLogTests
     {
-        const string easyCsv = ".\\alpha2.csv";
-        const string timestampedCsv = ".\\alpha3.csv";
+        static readonly string workingDirectory = Environment.CurrentDirectory;
+        static readonly string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+
+        static readonly string separator = System.IO.Path.DirectorySeparatorChar.ToString();
+        readonly string easyCsv = projectDirectory + separator + "files" + separator + "alpha2.csv";
+        readonly string timestampedCsv = projectDirectory + separator + "files" + separator + "alpha3.csv";
 
         [TestMethod]
         public void ImportedEventLogSetInvalidValuesTest()

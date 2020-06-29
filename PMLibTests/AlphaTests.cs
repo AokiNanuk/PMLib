@@ -7,6 +7,7 @@ using PMLib.Model.BasicPetriNet;
 using PMLib.Model.DataAnalysis;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace PMLibTests
@@ -14,13 +15,17 @@ namespace PMLibTests
     [TestClass]
     public class AlphaTests
     {
-        const string hardCsv = ".\\alpha.csv";
-        const string easyCsv = ".\\alpha2.csv";
-        const string veryHardCsv = ".\\alphaHard.csv";
-        const string cycleNetCsv = ".\\cycleNet.csv";
-        const string veryHardPnml = ".\\hardPetriNet.xml";
-        const string hardPnml = ".\\net.xml";
-        const string cycleNetPnml = ".\\cycleNet.xml";
+        static readonly string workingDirectory = Environment.CurrentDirectory;
+        static readonly string projectDirectory = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+
+        static readonly string separator = System.IO.Path.DirectorySeparatorChar.ToString();
+        readonly string hardCsv = projectDirectory + separator + "files" + separator + "alpha.csv";
+        readonly string easyCsv = projectDirectory + separator + "files" + separator + "alpha2.csv";
+        readonly string veryHardCsv = projectDirectory + separator + "files" + separator + "alphaHard.csv";
+        readonly string cycleNetCsv = projectDirectory + separator + "files" + separator + "cycleNet.csv";
+        readonly string veryHardPnml = projectDirectory + separator + "files" + separator + "hardPetriNet.xml";
+        readonly string hardPnml = projectDirectory + separator + "files" + separator + "net.xml";
+        readonly string cycleNetPnml = projectDirectory + separator + "files" + separator + "cycleNet.xml";
 
         private IPetriNet MakeEasyPetriNet()
         {
