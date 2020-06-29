@@ -64,8 +64,8 @@ namespace PMLib.ConformanceChecking.CausalFootprint
         /// <returns>True if A is falsely parallel with B, else returns false.</returns>
         private static bool IsFalseParallelism(TransitionTokenTraverseOverlay fromTransition, TransitionTokenTraverseOverlay toTransition)
         {
-            return fromTransition.TokenFootprint.CurrentLevels.Exists(a => toTransition.TokenFootprint.MergedLevels.Contains(a))
-                || fromTransition.TokenFootprint.CurrentLevels.Exists(a => toTransition.TokenFootprint.CurrentLevels.Contains(a));
+            return fromTransition.TokenFootprint.ActiveLevels.Exists(a => toTransition.TokenFootprint.MergedLevels.Contains(a))
+                || fromTransition.TokenFootprint.ActiveLevels.Exists(a => toTransition.TokenFootprint.ActiveLevels.Contains(a));
         }
 
         /// <summary>
@@ -82,9 +82,9 @@ namespace PMLib.ConformanceChecking.CausalFootprint
                     if (fromTransition.Id != toTransition.Id)
                     {
                         HashSet<string> fromTransitionGlobalIds = new HashSet<string>(
-                            TokenManipulationUtils.GetCurrentGlobalIds(fromTransition.TokenFootprint));
+                            TokenManipulationUtils.GetActiveGlobalIds(fromTransition.TokenFootprint));
                         HashSet<string> toTransitionGlobalIds = new HashSet<string>(
-                            TokenManipulationUtils.GetCurrentGlobalIds(toTransition.TokenFootprint));
+                            TokenManipulationUtils.GetActiveGlobalIds(toTransition.TokenFootprint));
                         if (fromTransitionGlobalIds.Overlaps(toTransitionGlobalIds) && !IsFalseParallelism(fromTransition, toTransition))
                         {
                             int fromIndex = matrix.ActivityIndices[fromTransition.Activity];

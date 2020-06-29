@@ -24,7 +24,7 @@ namespace PMLib.ConformanceChecking.CausalFootprint
         /// Returns global ID and then increments it in the Petri Net overlay.
         /// </summary>
         /// <returns>String containing global ID to be used.</returns>
-        public string GetNewGlobalId()
+        private string GetNewGlobalId()
         {
             string oldId = "" + GlobalId;
             GlobalId = GlobalId++;
@@ -35,10 +35,8 @@ namespace PMLib.ConformanceChecking.CausalFootprint
         /// Sets up place overlays in the Petri Net overlay based on places from given Petri Net.
         /// </summary>
         /// <param name="places">Places of given Petri Net.</param>
-        public void SetUpPlacesOverlay(List<IPlace> places)
+        private void SetUpPlacesOverlay(List<IPlace> places)
         {
-            List<PlaceTokenTraverseOverlay> placeOverlays = new List<PlaceTokenTraverseOverlay>();
-
             foreach (IPlace p in places)
             {
                 PlacesWithFootprints.Add(new PlaceTokenTraverseOverlay(p));

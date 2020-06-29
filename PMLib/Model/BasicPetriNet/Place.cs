@@ -10,8 +10,6 @@ namespace PMLib.Model.BasicPetriNet
     public class Place : IPlace
     {
         public string Id { get; } = "";
-        public uint Tokens { get; protected set; } = 0;
-        public uint MockTokens { get; protected set; } = 0;
 
         public Place(string id)
         {

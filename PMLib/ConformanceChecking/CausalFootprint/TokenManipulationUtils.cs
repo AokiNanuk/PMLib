@@ -42,18 +42,18 @@ namespace PMLib.ConformanceChecking.CausalFootprint
             outputToken.MergedLevels.Add(mergedLevel);
             activeGlobalIdMonitor[mergedGlobalId]--;
 
-            foreach (string mergedTokenCurrentLevel in mergedToken.CurrentLevels)
+            foreach (string mergedTokenCurrentLevel in mergedToken.ActiveLevels)
             {
-                if (!outputToken.CurrentLevels.Contains(mergedTokenCurrentLevel) && mergedTokenCurrentLevel != mergedLevel)
+                if (!outputToken.ActiveLevels.Contains(mergedTokenCurrentLevel) && mergedTokenCurrentLevel != mergedLevel)
                 {
-                    int.TryParse(StringUtils.GetGlobalId(outputToken.CurrentLevels[i]), out int outputCurrentGlobalId);
+                    int.TryParse(StringUtils.GetGlobalId(outputToken.ActiveLevels[i]), out int outputCurrentGlobalId);
                     int.TryParse(StringUtils.GetGlobalId(mergedTokenCurrentLevel), out int mergedCurrentGlobalId);
                     while (outputCurrentGlobalId < mergedCurrentGlobalId)
                     {
                         i++;
-                        int.TryParse(StringUtils.GetGlobalId(outputToken.CurrentLevels[i]), out outputCurrentGlobalId);
+                        int.TryParse(StringUtils.GetGlobalId(outputToken.ActiveLevels[i]), out outputCurrentGlobalId);
                     }
-                    outputToken.CurrentLevels.Insert(i, mergedTokenCurrentLevel);
+                    outputToken.ActiveLevels.Insert(i, mergedTokenCurrentLevel);
                 }
             }
             foreach (string mergedTokenMergedLevel in mergedToken.MergedLevels)
@@ -65,11 +65,11 @@ namespace PMLib.ConformanceChecking.CausalFootprint
             }
             if (activeGlobalIdMonitor[mergedGlobalId] == 1)
             {
-                string level = outputToken.CurrentLevels.Find(a => StringUtils.GetGlobalId(a) == mergedGlobalId);
+                string level = outputToken.ActiveLevels.Find(a => StringUtils.GetGlobalId(a) == mergedGlobalId);
                 if (level != null)
                 {
                     outputToken.MergedLevels.Add(level);
-                    outputToken.CurrentLevels.Remove(level);
+                    outputToken.ActiveLevels.Remove(level);
                     activeGlobalIdMonitor.Remove(mergedGlobalId);
                 }
             }
@@ -89,12 +89,12 @@ namespace PMLib.ConformanceChecking.CausalFootprint
             {
                 bool hasMerged = false;
                 FootprintAnalysisToken mergedToken = tokens[i];
-                for (int j = mergedToken.CurrentLevels.Count - 1; j >= 0 && !hasMerged; j--)
+                for (int j = mergedToken.ActiveLevels.Count - 1; j >= 0 && !hasMerged; j--)
                 {
-                    string mergedLevel = mergedToken.CurrentLevels[j];
-                    for (int k = outputToken.CurrentLevels.Count - 1; k >= 0 && !hasMerged; k--)
+                    string mergedLevel = mergedToken.ActiveLevels[j];
+                    for (int k = outputToken.ActiveLevels.Count - 1; k >= 0 && !hasMerged; k--)
                     {
-                        string outputLevel = outputToken.CurrentLevels[k];
+                        string outputLevel = outputToken.ActiveLevels[k];
                         if (StringUtils.GetGlobalId(mergedLevel) == StringUtils.GetGlobalId(outputLevel))
                         {
                             MergeTwoTokens(ref outputToken, mergedToken, mergedLevel, activeGlobalIdMonitor);
@@ -121,7 +121,7 @@ namespace PMLib.ConformanceChecking.CausalFootprint
             for (uint i = 0; i < count; i++)
             {
                 FootprintAnalysisToken newToken = new FootprintAnalysisToken(token);
-                newToken.CurrentLevels.Add(newGlobalId + localId);
+                newToken.ActiveLevels.Add(newGlobalId + localId);
                 outputTokens.Add(newToken);
                 localId = StringUtils.IncrementId(localId);
             }
@@ -134,10 +134,10 @@ namespace PMLib.ConformanceChecking.CausalFootprint
         /// </summary>
         /// <param name="token">A token from which current global IDs should be extracted.</param>
         /// <returns>A list of global IDs of given token.</returns>
-        public static List<string> GetCurrentGlobalIds(FootprintAnalysisToken token)
+        public static List<string> GetActiveGlobalIds(FootprintAnalysisToken token)
         {
             List<string> splitIds = new List<string>();
-            foreach (string level in token.CurrentLevels)
+            foreach (string level in token.ActiveLevels)
             {
                 splitIds.Add(StringUtils.GetGlobalId(level));
             }

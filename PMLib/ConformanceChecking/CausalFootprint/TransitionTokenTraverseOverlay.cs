@@ -25,16 +25,6 @@ namespace PMLib.ConformanceChecking.CausalFootprint
         public string Activity { get; }
 
         /// <summary>
-        /// Sets given FootprintAnalysisToken as footprint and marks the transition.
-        /// </summary>
-        /// <param name="footprint">FootprintAnalysisToken to be set as transition's footprint.</param>
-        public void SetFootprint(FootprintAnalysisToken footprint)
-        {
-            TokenFootprint = footprint;
-            IsMarked = true;
-        }
-
-        /// <summary>
         /// Copies and sets given collection of places as input places.
         /// </summary>
         /// <param name="places">A collection of places to be set as input places.</param>
@@ -58,18 +48,16 @@ namespace PMLib.ConformanceChecking.CausalFootprint
             }
         }
 
-        public TransitionTokenTraverseOverlay(ITransition transition, List<PlaceTokenTraverseOverlay> places)
+        /// <summary>
+        /// Sets given FootprintAnalysisToken as footprint and marks the transition.
+        /// </summary>
+        /// <param name="footprint">FootprintAnalysisToken to be set as transition's footprint.</param>
+        public void SetFootprint(FootprintAnalysisToken footprint)
         {
-            InputPlaces = new List<PlaceTokenTraverseOverlay>();
-            OutputPlaces = new List<PlaceTokenTraverseOverlay>();
-
-            SetUpInputPlaces(transition.InputPlaces, places);
-            SetUpOutputPlaces(transition.OutputPlaces, places);
-            Id = transition.Id;
-            Activity = transition.Activity;
-            IsMarked = false;
+            TokenFootprint = footprint;
+            IsMarked = true;
         }
-        
+
         /// <summary>
         /// Determines whether the transition can be fired (every input place is marked and there is an output place which is unmarked).
         /// </summary>
@@ -95,6 +83,18 @@ namespace PMLib.ConformanceChecking.CausalFootprint
                 }
             }
             return false;
+        }
+
+        public TransitionTokenTraverseOverlay(ITransition transition, List<PlaceTokenTraverseOverlay> places)
+        {
+            InputPlaces = new List<PlaceTokenTraverseOverlay>();
+            OutputPlaces = new List<PlaceTokenTraverseOverlay>();
+
+            SetUpInputPlaces(transition.InputPlaces, places);
+            SetUpOutputPlaces(transition.OutputPlaces, places);
+            Id = transition.Id;
+            Activity = transition.Activity;
+            IsMarked = false;
         }
     }
 }

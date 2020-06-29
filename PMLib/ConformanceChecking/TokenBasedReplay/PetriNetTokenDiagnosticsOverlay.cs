@@ -16,16 +16,6 @@ namespace PMLib.ConformanceChecking.TokenBasedReplay
 
         public Dictionary<string, PlaceTokenDiagnosticsOverlay> Diagnostics { get; }
 
-        public PetriNetTokenDiagnosticsOverlay(IPetriNet net)
-        {
-            PetriNet = net;
-            Diagnostics = new Dictionary<string, PlaceTokenDiagnosticsOverlay>();
-            foreach (IPlace p in net.Places)
-            {
-                Diagnostics.Add(p.Id, new PlaceTokenDiagnosticsOverlay());
-            }
-        }
-
         /// <summary>
         /// Finds start place and produces an initial token.
         /// </summary>
@@ -90,5 +80,16 @@ namespace PMLib.ConformanceChecking.TokenBasedReplay
             CleanUpEndPlace();
             SetRemnants();
         }
-    } 
+
+        public PetriNetTokenDiagnosticsOverlay(IPetriNet net)
+        {
+            PetriNet = net;
+            Diagnostics = new Dictionary<string, PlaceTokenDiagnosticsOverlay>();
+            foreach (IPlace p in net.Places)
+            {
+                Diagnostics.Add(p.Id, new PlaceTokenDiagnosticsOverlay());
+            }
+        }
+
+    }
 }

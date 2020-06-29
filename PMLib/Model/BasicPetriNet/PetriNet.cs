@@ -17,14 +17,6 @@ namespace PMLib.Model.BasicPetriNet
 
         public IPlace EndPlace { get; }
 
-        public PetriNet(List<ITransition> transitions, List<IPlace> places, IPlace startPlace, IPlace endPlace)
-        {
-            Transitions = transitions;
-            Places = places;
-            StartPlace = startPlace;
-            EndPlace = endPlace;
-        }
-
         /// <summary>
         /// Finds corresponding transition of a Petri net to given activity (the search is not case-sensitive). 
         /// If such transition does not exist, returns null.
@@ -64,6 +56,14 @@ namespace PMLib.Model.BasicPetriNet
                 }
             }
             return startTransitions;
+        }
+
+        public PetriNet(List<ITransition> transitions, List<IPlace> places, IPlace startPlace, IPlace endPlace)
+        {
+            Transitions = transitions;
+            Places = places;
+            StartPlace = startPlace;
+            EndPlace = endPlace;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace PMLib.Model
         }
 
         /// <summary>
-        /// Checks whether such key (column name) which was given by user exists in loaded data.
+        /// Checks whether such key (column name) which was given by the user exists in loaded data.
         /// </summary>
         /// <param name="key">String value of given key (column name).</param>
         /// <returns>True if such key exists in loaded data, else returns false.</returns>
@@ -73,8 +73,8 @@ namespace PMLib.Model
 
         /// <summary>
         /// Sets a key (column name) which should be considered as "timestamp" for the purpouses of discovery algorithms.
-        /// Note: The values in this column need to be parsable by DateTime.TryParse(string ...) method in order for 
-        /// ordering activities by timestamps to work properly.
+        /// <para>Note: The values in this column need to be parsable by DateTime.TryParse(string ...) method in order for 
+        /// ordering activities by timestamps to work properly.</para>
         /// </summary>
         /// <param name="timestamp">String value of a key (column name) to be set as "timestamp".</param>
         /// <returns>True if a key has been successfuly set as activity, else returns false.</returns>
