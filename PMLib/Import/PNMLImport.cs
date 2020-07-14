@@ -43,10 +43,10 @@ namespace PMLib.Import
                 transitions.Add(new Transition(t.Attribute("id").Value, t.Element(ns + "name").Element(ns + "text").Value));
             }
             
-            foreach (XElement a in xArcs)
+            foreach (XElement arc in xArcs)
             {
-                string sourceId = a.Attribute("source").Value;
-                string targetId = a.Attribute("target").Value;
+                string sourceId = arc.Attribute("source").Value;
+                string targetId = arc.Attribute("target").Value;
                 if (sourceId[0] == 'p')
                 {
                     transitions.Find(a => a.Id == targetId).InputPlaces.Add(places.Find(a => a.Id == sourceId));
@@ -71,10 +71,10 @@ namespace PMLib.Import
             HashSet<string> targetIds = new HashSet<string>();
             HashSet<string> sourceIds = new HashSet<string>();
 
-            foreach (XElement a in xArcs)
+            foreach (XElement arc in xArcs)
             {
-                string targetId = a.Attribute("target").Value;
-                string sourceId = a.Attribute("source").Value;
+                string targetId = arc.Attribute("target").Value;
+                string sourceId = arc.Attribute("source").Value;
                 if (targetId[0] == 'p')
                 {
                     targetIds.Add(targetId);

@@ -187,7 +187,7 @@ namespace PMLibTests
             IPetriNet exampleNet = MakeEasyPetriNet();
 
             // Act
-            string filepath = PNMLExport.Serialize(exampleNet);
+            string filepath = "." + separator + PNMLExport.Serialize(exampleNet);
             loadedNet = PNMLImport.Deserialize(filepath);
 
             // Assert
@@ -222,8 +222,8 @@ namespace PMLibTests
             string exampleDot = MakeEasyDOT();
 
             // Act
-            string filepath = DOTExport.Serialize(exampleNet);
-            string loadedDot = File.ReadAllText(".\\" + filepath);
+            string filepath = "." + separator + DOTExport.Serialize(exampleNet);
+            string loadedDot = File.ReadAllText(filepath);
 
             // Assert
             Assert.AreEqual(exampleDot, loadedDot);
